@@ -4,20 +4,24 @@ type EventType = {
     id: string;
     title: string;
     description: string;
+    date: string;
+    image: string;
 }
 
 const EventsPage = () => {
     const [events, setEvents] = useState<EventType[]>([]);
     const [isLoading, setIsLoading] = useState(false);
 
-    const BASE_URL = import.meta.env.BASE_URL || 'http://localhost:8080/events/';
+    const BASE_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:8080/events/';
 
     useEffect(() => {
         setIsLoading(true);
         fetch(BASE_URL)
             .then((response) => response.json())
             .then((data) => {
-                setEvents(data);
+                setEvents(data?.events ?? []);
+                console.log(data.events[0]);
+
                 setIsLoading(false);
             })
             .catch((error) => {
@@ -41,14 +45,20 @@ const EventsPage = () => {
 
     return (
         <>
-            <h2 className='text-white'>Events Page</h2>
-
-            {events.map((event) => (
-                <div key={event.id}>
-                    <h3>{event.title}</h3>
-                    <p>{event.description}</p>
-                </div>
-            ))}
+            <div className="mx-auto max-w-4xl flex flex-col gap-4 p-4">
+                {events.map((event) => (
+                    <div key={event.id} className="flex bg-[#31302e] rounded overflow-hidden text-white">
+                        {event.image && (
+                            <img src={event.image} alt={event.title} className="w-1/3 object-cover" />
+                        )}
+                        <div className="p-4">
+                            <h3 className="font-bold text-lg mb-1">{event.title}</h3>
+                            <p className="text-sm text-[#aeaba7] mb-2">{event.date}</p>
+                            <p>{event.description}</p>
+                        </div>
+                    </div>
+                ))}
+            </div>
         </>
     )
 }
