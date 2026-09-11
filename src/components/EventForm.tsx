@@ -1,9 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 
-import classes from './EventForm.module.css';
-
 interface EventFormProps {
-    method: string;
+    method?: string;
     event?: {
         title: string;
         image: string;
@@ -12,38 +10,90 @@ interface EventFormProps {
     };
 }
 
-function EventForm({
-    method: _method,
-    event: _event,
-}: EventFormProps) {
+const inputClass =
+    'mt-1 block w-full rounded-md border border-gray-700 bg-gray-900 px-3 py-2 text-gray-100 placeholder:text-gray-500 transition focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500';
+
+const labelClass = 'mb-1 block text-sm font-medium text-gray-300';
+
+function EventForm({ method = 'post', event }: EventFormProps) {
     const navigate = useNavigate();
+
     function cancelHandler() {
         navigate('..');
     }
 
     return (
-        <form className={classes.form}>
+        <form
+            method={method}
+            className="mx-auto my-8 w-full max-w-2xl space-y-5 rounded-xl bg-gray-800 p-6 shadow-xl shadow-black/20 sm:p-8"
+        >
             <p>
-                <label htmlFor="title">Title</label>
-                <input id="title" type="text" name="title" required />
+                <label htmlFor="title" className={labelClass}>
+                    Title
+                </label>
+                <input
+                    id="title"
+                    type="text"
+                    name="title"
+                    required
+                    defaultValue={event?.title ?? ''}
+                    className={inputClass}
+                />
             </p>
             <p>
-                <label htmlFor="image">Image</label>
-                <input id="image" type="url" name="image" required />
+                <label htmlFor="image" className={labelClass}>
+                    Image
+                </label>
+                <input
+                    id="image"
+                    type="url"
+                    name="image"
+                    required
+                    defaultValue={event?.image ?? ''}
+                    placeholder="https://example.com/event.jpg"
+                    className={inputClass}
+                />
             </p>
             <p>
-                <label htmlFor="date">Date</label>
-                <input id="date" type="date" name="date" required />
+                <label htmlFor="date" className={labelClass}>
+                    Date
+                </label>
+                <input
+                    id="date"
+                    type="date"
+                    name="date"
+                    required
+                    defaultValue={event?.date ?? ''}
+                    className={`${inputClass} [color-scheme:dark]`}
+                />
             </p>
             <p>
-                <label htmlFor="description">Description</label>
-                <textarea id="description" name="description" rows={5} required />
+                <label htmlFor="description" className={labelClass}>
+                    Description
+                </label>
+                <textarea
+                    id="description"
+                    name="description"
+                    rows={5}
+                    required
+                    defaultValue={event?.description ?? ''}
+                    className={`${inputClass} resize-y`}
+                />
             </p>
-            <div className={classes.actions}>
-                <button type="button" onClick={cancelHandler}>
+            <div className="flex items-center justify-end gap-3 pt-2">
+                <button
+                    type="button"
+                    onClick={cancelHandler}
+                    className="cursor-pointer rounded-md px-6 py-2 text-sm font-medium text-gray-300 transition hover:bg-gray-700 hover:text-gray-100"
+                >
                     Cancel
                 </button>
-                <button>Save</button>
+                <button
+                    type="submit"
+                    className="cursor-pointer rounded-md bg-primary-500 px-6 py-2 text-sm font-semibold text-gray-900 transition hover:bg-primary-400 active:scale-[0.98]"
+                >
+                    Save
+                </button>
             </div>
         </form>
     );

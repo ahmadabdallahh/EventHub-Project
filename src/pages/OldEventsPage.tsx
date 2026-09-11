@@ -20,8 +20,6 @@ const EventsPage = () => {
             .then((response) => response.json())
             .then((data) => {
                 setEvents(data?.events ?? []);
-                console.log(data.events[0]);
-
                 setIsLoading(false);
             })
             .catch((error) => {
