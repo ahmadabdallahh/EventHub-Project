@@ -4,6 +4,19 @@
 @theme {
     --font-display: "Outfit", Inter, Avenir, Helvetica, Arial, sans-serif;
 
+    --animate-fade-up: fade-up 0.6s ease-out both;
+
+    @keyframes fade-up {
+        from {
+            opacity: 0;
+            transform: translateY(12px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
     --color-gray-100: #f4f3f1;
     --color-gray-200: #dddbd8;
     --color-gray-300: #ccc9c6;
