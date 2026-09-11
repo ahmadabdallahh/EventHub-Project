@@ -5,7 +5,7 @@ const linkClass = ({ isActive }: { isActive: boolean }) =>
         ? 'rounded-md bg-primary-500 px-4 py-2 text-sm font-semibold text-gray-900 transition hover:bg-primary-400'
         : 'rounded-md px-4 py-2 text-sm font-medium text-gray-300 transition hover:bg-gray-800 hover:text-primary-300';
 
-function MainNavigation() {
+function RootLayout() {
     return (
         <div className="min-h-dvh bg-gray-900 text-gray-100">
             <header className="sticky top-0 z-10 border-b border-gray-800 bg-gray-900/90 backdrop-blur">
@@ -16,12 +16,14 @@ function MainNavigation() {
                     >
                         Event<span className="text-primary-500">Hub</span>
                     </Link>
+
                     <ul className="flex items-center gap-2">
                         <li>
                             <NavLink to="/" end className={linkClass}>
                                 Home
                             </NavLink>
                         </li>
+
                         <li>
                             <NavLink to="/events" className={linkClass}>
                                 Events
@@ -45,4 +47,4 @@ function MainNavigation() {
     );
 }
 
-export default MainNavigation;
+export default RootLayout;

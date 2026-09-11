@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 
-interface EventsListProps {
+type EventsListProps = {
     events: {
         id: string;
         image: string;
@@ -34,6 +34,7 @@ function EventsList({ events }: EventsListProps) {
                     There is nothing on the calendar right now. Be the first to
                     add an event and get things started.
                 </p>
+
                 <Link
                     to="new"
                     className="mt-6 inline-block rounded-md bg-primary-500 px-6 py-2.5 text-sm font-semibold text-gray-900 transition hover:bg-primary-400 active:scale-[0.98]"
@@ -51,10 +52,12 @@ function EventsList({ events }: EventsListProps) {
                     <p className="mb-1 text-sm font-semibold uppercase tracking-widest text-primary-400">
                         Browse
                     </p>
+
                     <h1 className="font-display text-3xl font-bold tracking-tight text-gray-100 sm:text-4xl">
                         All Events
                     </h1>
                 </div>
+
                 <p className="text-sm text-gray-500 tabular-nums">
                     {events.length} upcoming
                 </p>
@@ -73,10 +76,10 @@ function EventsList({ events }: EventsListProps) {
                                 style={{ animationDelay: `${Math.min(index, 8) * 70}ms` }}
                                 className="group flex h-full animate-fade-up flex-col overflow-hidden rounded-2xl bg-gray-800 shadow-xl shadow-black/20 transition duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-black/30 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
                             >
+
                                 <div
-                                    className={`relative overflow-hidden ${
-                                        featured ? 'aspect-[16/8]' : 'aspect-[16/9]'
-                                    }`}
+                                    className={`relative overflow-hidden ${featured ? 'aspect-16/8' : 'aspect-video'
+                                        }`}
                                 >
                                     <img
                                         src={event.image}
@@ -84,24 +87,28 @@ function EventsList({ events }: EventsListProps) {
                                         loading="lazy"
                                         className="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-105"
                                     />
-                                    <div className="absolute inset-0 bg-gradient-to-t from-gray-900/70 via-transparent to-transparent" />
+
+                                    <div className="absolute inset-0 bg-linear-to-t from-gray-900/70 via-transparent to-transparent" />
+
                                     <time className="absolute left-4 top-4 rounded-full bg-gray-900/80 px-3 py-1 text-xs font-semibold text-primary-300 tabular-nums backdrop-blur">
                                         {formatDate(event.date)}
                                     </time>
                                 </div>
+
                                 <div className="flex flex-1 flex-col p-5">
                                     <h2
-                                        className={`font-display font-semibold text-gray-100 transition group-hover:text-primary-300 ${
-                                            featured ? 'text-2xl' : 'text-lg'
-                                        }`}
+                                        className={`font-display font-semibold text-gray-100 transition group-hover:text-primary-300 ${featured ? 'text-2xl' : 'text-lg'
+                                            }`}
                                     >
                                         {event.title}
                                     </h2>
+
                                     {event.description && (
                                         <p className="mt-2 line-clamp-2 flex-1 text-sm leading-relaxed text-gray-400">
                                             {event.description}
                                         </p>
                                     )}
+
                                     <span className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-primary-400">
                                         View details
                                         <span

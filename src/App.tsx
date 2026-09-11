@@ -3,14 +3,14 @@ import EditEventPage from "./pages/EditEventPage";
 import EventDetailPage from "./pages/EventDetailPage";
 import HomePage from "./pages/HomePage";
 import NewEventPage from "./pages/NewEventPage";
-import MainNavigation from "./components/MainNavigation";
 import { eventsLoader } from "./utils/eventLoader";
 import EventsPageLoader from "./pages/EventsPageLoader";
+import RootLayout from "./components/RootLayout";
 
 const router = createBrowserRouter([
     {
-        path: "",
-        element: <MainNavigation />,
+        path: "/",
+        element: <RootLayout />,
         children: [
             {
                 index: true,
