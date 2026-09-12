@@ -4,7 +4,7 @@ const NewEventPage = () => {
 
     return (
         <>
-            <EventForm />
+            <EventForm action="/events/new" method="post" />
         </>
     )
 }

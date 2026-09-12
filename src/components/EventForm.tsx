@@ -1,13 +1,14 @@
-import { useNavigate } from 'react-router-dom';
+import { Form, useNavigate } from 'react-router-dom';
 
 interface EventFormProps {
-    method?: string;
+    method?: "get" | "post" | "put" | "patch" | "delete";
     event?: {
         title: string;
         image: string;
         date: string;
         description: string;
     };
+    action?: string | undefined;
 }
 
 const inputClass =
@@ -15,7 +16,7 @@ const inputClass =
 
 const labelClass = 'mb-1 block text-sm font-medium text-gray-300';
 
-function EventForm({ method = 'post', event }: EventFormProps) {
+function EventForm({ method = 'post', event, ...props }: EventFormProps) {
     const navigate = useNavigate();
 
     function cancelHandler() {
@@ -23,9 +24,10 @@ function EventForm({ method = 'post', event }: EventFormProps) {
     }
 
     return (
-        <form
+        <Form
             method={method}
             className="mx-auto my-8 w-full max-w-2xl space-y-5 rounded-xl bg-gray-800 p-6 shadow-xl shadow-black/20 sm:p-8"
+            action={props.action}
         >
             <p>
                 <label htmlFor="title" className={labelClass}>
@@ -100,7 +102,7 @@ function EventForm({ method = 'post', event }: EventFormProps) {
                     Save
                 </button>
             </div>
-        </form>
+        </Form>
     );
 }
 
