@@ -40,6 +40,7 @@ function EventForm({ method = 'post', event }: EventFormProps) {
                     className={inputClass}
                 />
             </p>
+
             <p>
                 <label htmlFor="image" className={labelClass}>
                     Image
@@ -54,6 +55,7 @@ function EventForm({ method = 'post', event }: EventFormProps) {
                     className={inputClass}
                 />
             </p>
+
             <p>
                 <label htmlFor="date" className={labelClass}>
                     Date
@@ -67,6 +69,7 @@ function EventForm({ method = 'post', event }: EventFormProps) {
                     className={`${inputClass} scheme-dark`}
                 />
             </p>
+
             <p>
                 <label htmlFor="description" className={labelClass}>
                     Description
@@ -80,6 +83,7 @@ function EventForm({ method = 'post', event }: EventFormProps) {
                     className={`${inputClass} resize-y`}
                 />
             </p>
+
             <div className="flex items-center justify-end gap-3 pt-2">
                 <button
                     type="button"
@@ -88,6 +92,7 @@ function EventForm({ method = 'post', event }: EventFormProps) {
                 >
                     Cancel
                 </button>
+
                 <button
                     type="submit"
                     className="cursor-pointer rounded-md bg-primary-500 px-6 py-2 text-sm font-semibold text-gray-900 transition hover:bg-primary-400 active:scale-[0.98]"
