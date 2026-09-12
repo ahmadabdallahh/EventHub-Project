@@ -5,7 +5,11 @@ import { redirect, type ActionFunctionArgs } from "react-router-dom";
 const BASE_URL = 'https://redux-events-backend.fly.dev/events/';
 
 export async function addEvent({ request }: ActionFunctionArgs) {
-    const { title, description, date, image } = await request.json();
+    const formData = await request.formData();
+    const title = formData.get("title") as string;
+    const description = formData.get("description") as string;
+    const date = formData.get("date") as string;
+    const image = formData.get("image") as string;
 
     const response = await fetch(BASE_URL, {
         method: "POST",
