@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Form, Link } from 'react-router-dom';
 
 interface EventItemProps {
     event: {
@@ -53,13 +53,14 @@ function EventItem({ event }: EventItemProps) {
                         Edit
                     </Link>
 
-                    <form method='post' action={`/events/${event.id}`}>
+                    <Form method="post">
                         <button
+                            type="submit"
                             className="cursor-pointer rounded-md px-6 py-2 text-sm font-medium text-gray-300 transition hover:bg-gray-700 hover:text-gray-100 active:scale-[0.98]"
                         >
                             Delete
                         </button>
-                    </form>
+                    </Form>
                 </menu>
             </div>
         </article>
