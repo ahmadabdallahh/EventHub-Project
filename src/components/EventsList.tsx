@@ -84,7 +84,10 @@ function EventsList({ events }: EventsListProps) {
                                     <img
                                         src={event.image}
                                         alt={event.title}
-                                        loading="lazy"
+                                        width={600}
+                                        height={400}
+                                        loading={featured ? 'eager' : 'lazy'}
+                                        fetchPriority={featured ? 'high' : undefined}
                                         className="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-105"
                                     />
 
