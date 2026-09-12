@@ -1,14 +1,24 @@
+import { Suspense, lazy } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import EditEventPage from "./pages/EditEventPage";
 import ErrorPage from "./pages/ErrorPage";
-import EventDetailPage from "./pages/EventDetailPage";
 import HomePage from "./pages/HomePage";
-import NewEventPage from "./pages/NewEventPage";
 import { eventsLoader } from "./utils/eventLoader";
 import EventsPageLoader from "./pages/EventsPageLoader";
 import RootLayout from "./components/RootLayout";
 import { fetchOneEvent } from "./utils/fetchOneEvent";
 import { deleteItemAction } from "./utils/deleteItem";
+
+const EditEventPage = lazy(() => import("./pages/EditEventPage"));
+const EventDetailPage = lazy(() => import("./pages/EventDetailPage"));
+const NewEventPage = lazy(() => import("./pages/NewEventPage"));
+
+function lazyRoute(Component: React.LazyExoticComponent<() => React.JSX.Element>) {
+    return (
+        <Suspense fallback={<div className="flex items-center justify-center p-16 text-gray-400">Loading...</div>}>
+            <Component />
+        </Suspense>
+    );
+}
 
 const router = createBrowserRouter([
     {
@@ -30,17 +40,17 @@ const router = createBrowserRouter([
                     },
                     {
                         path: "new",
-                        element: <NewEventPage />,
+                        element: lazyRoute(NewEventPage),
                     },
                     {
                         path: ":id",
-                        element: <EventDetailPage />,
+                        element: lazyRoute(EventDetailPage),
                         loader: fetchOneEvent,
                         action: deleteItemAction,
                     },
                     {
                         path: ":id/edit",
-                        element: <EditEventPage />,
+                        element: lazyRoute(EditEventPage),
                     }
                 ],
             },
