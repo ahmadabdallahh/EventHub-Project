@@ -64,7 +64,7 @@ function EventForm({ method = 'post', event }: EventFormProps) {
                     name="date"
                     required
                     defaultValue={event?.date ?? ''}
-                    className={`${inputClass} [color-scheme:dark]`}
+                    className={`${inputClass} scheme-dark`}
                 />
             </p>
             <p>
