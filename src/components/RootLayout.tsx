@@ -25,8 +25,14 @@ function RootLayout() {
                         </li>
 
                         <li>
-                            <NavLink to="/events" className={linkClass}>
+                            <NavLink to="/events" end className={linkClass}>
                                 Events
+                            </NavLink>
+                        </li>
+
+                        <li>
+                            <NavLink to="/events/new" end className={linkClass}>
+                                Add Event
                             </NavLink>
                         </li>
                     </ul>

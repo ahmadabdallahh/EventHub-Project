@@ -40,7 +40,7 @@ const router = createBrowserRouter([
                     {
                         index: true,
                         element: <EventsPageLoader />,
-                        action: eventsLoader,
+                        loader: eventsLoader,
                     },
                     {
                         path: "new",

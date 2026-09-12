@@ -2,7 +2,7 @@
 
 import { redirect, type ActionFunctionArgs } from "react-router-dom";
 
-const BASE_URL = 'https://redux-events-backend.fly.dev/events/';
+const BASE_URL = import.meta.env.VITE ?? 'http://localhost:8080/events/';
 
 export async function addEvent({ request }: ActionFunctionArgs) {
     const formData = await request.formData();

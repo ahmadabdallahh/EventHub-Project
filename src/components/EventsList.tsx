@@ -24,7 +24,7 @@ function formatDate(iso: string) {
 }
 
 function EventsList({ events }: EventsListProps) {
-    if (events.length === 0) {
+    if (events?.length === 0) {
         return (
             <div className="mx-auto my-12 w-full max-w-2xl rounded-2xl border border-dashed border-gray-700 bg-gray-800/50 px-8 py-16 text-center">
                 <p className="font-display text-2xl font-semibold text-gray-100">
@@ -59,7 +59,7 @@ function EventsList({ events }: EventsListProps) {
                 </div>
 
                 <p className="text-sm text-gray-500 tabular-nums">
-                    {events.length} upcoming
+                    {events?.length} upcoming
                 </p>
             </div>
 
