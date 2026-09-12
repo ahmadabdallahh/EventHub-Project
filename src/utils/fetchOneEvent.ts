@@ -10,7 +10,7 @@ export type EventType = {
     image: string;
 };
 
-const BASE_URL = import.meta.env.BASE_URL_DATA ?? 'http://localhost:8080/events/';
+const BASE_URL = import.meta.env.API_URL ?? 'http://localhost:8080/events/';
 
 export async function fetchOneEvent({ params }: LoaderFunctionArgs): Promise<EventType> {
     const { id } = params;

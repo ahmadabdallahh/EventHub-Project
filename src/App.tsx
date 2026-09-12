@@ -8,6 +8,7 @@ import { eventsLoader } from "./utils/eventLoader";
 import EventsPageLoader from "./pages/EventsPageLoader";
 import RootLayout from "./components/RootLayout";
 import { fetchOneEvent } from "./utils/fetchOneEvent";
+import { deleteItemAction } from "./utils/deleteItem";
 
 const router = createBrowserRouter([
     {
@@ -34,12 +35,13 @@ const router = createBrowserRouter([
                     {
                         path: ":id",
                         element: <EventDetailPage />,
-                        loader: fetchOneEvent
+                        loader: fetchOneEvent,
+                        action: deleteItemAction,
                     },
                     {
                         path: ":id/edit",
                         element: <EditEventPage />,
-                    },
+                    }
                 ],
             },
         ],

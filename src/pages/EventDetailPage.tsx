@@ -14,6 +14,7 @@ const EventDetailPage = () => {
                 <span aria-hidden="true">←</span>
                 Back to all events
             </Link>
+
             <EventItem event={event} />
         </div>
     );
