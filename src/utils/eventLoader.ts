@@ -1,5 +1,7 @@
 export async function eventsLoader() {
-    const response = await fetch("http://localhost:8080/events");
+    const BASE_URL = import.meta.env.VITE_API_URL ?? 'https://redux-events-backend.fly.dev/events/';
+
+    const response = await fetch(BASE_URL);
 
     if (!response.ok) {
         throw new Response("Failed to fetch events", { status: 500 });

@@ -10,7 +10,7 @@ export type EventType = {
     image: string;
 };
 
-const BASE_URL = import.meta.env.API_URL ?? 'http://localhost:8080/events/';
+const BASE_URL = import.meta.env.VITE_API_URL ?? 'https://redux-events-backend.fly.dev/events/';
 
 export async function fetchOneEvent({ params }: LoaderFunctionArgs): Promise<EventType> {
     const { id } = params;
