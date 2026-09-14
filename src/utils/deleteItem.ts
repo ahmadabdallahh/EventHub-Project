@@ -2,7 +2,7 @@
 
 import { redirect, type LoaderFunctionArgs } from "react-router-dom";
 
-const BASE_URL = import.meta.env.API_URL ?? 'http://localhost:8080/events/';
+const BASE_URL = import.meta.env.API_URL ?? 'https://redux-events-backend.fly.dev/events/';
 
 export async function deleteItemAction({ params }: LoaderFunctionArgs) {
     const { id } = params;

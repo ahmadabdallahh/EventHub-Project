@@ -1,5 +1,5 @@
 export async function eventsLoader() {
-    const BASE_URL = import.meta.env.API_URL ?? 'http://localhost:8080/events/';
+    const BASE_URL = import.meta.env.API_URL ?? 'https://redux-events-backend.fly.dev/events/';
 
     const response = await fetch(BASE_URL);
 
