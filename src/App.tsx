@@ -9,6 +9,7 @@ import { fetchOneEvent } from "./utils/fetchOneEvent";
 import { deleteItemAction } from "./utils/deleteItem";
 import { addEvent } from "./utils/addEvent";
 import Loading from "./components/Loading";
+import { editEventDetails } from "./utils/editEventDetails";
 
 const EditEventPage = lazy(() => import("./pages/EditEventPage"));
 const EventDetailPage = lazy(() => import("./pages/EventDetailPage"));
@@ -56,6 +57,8 @@ const router = createBrowserRouter([
                     {
                         path: ":id/edit",
                         element: lazyRoute(EditEventPage),
+                        loader: fetchOneEvent,
+                        action: editEventDetails,
                     }
                 ],
             },

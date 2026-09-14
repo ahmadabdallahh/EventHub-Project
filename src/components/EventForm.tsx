@@ -7,7 +7,7 @@ interface EventFormProps {
         image: string;
         date: string;
         description: string;
-};
+    };
     action?: string | undefined;
 }
 
