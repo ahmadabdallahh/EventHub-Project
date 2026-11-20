@@ -1,4 +1,5 @@
-import { Link, NavLink, Outlet } from 'react-router-dom';
+import { Form, Link, NavLink, Outlet, useLocation, useRouteLoaderData } from 'react-router-dom';
+import type { SessionData } from '../utils/auth/session';
 
 const linkClass = ({ isActive }: { isActive: boolean }) =>
     isActive
@@ -6,6 +7,16 @@ const linkClass = ({ isActive }: { isActive: boolean }) =>
         : 'rounded-md px-4 py-2 text-sm font-medium text-gray-300 transition hover:bg-gray-800 hover:text-primary-300';
 
 function RootLayout() {
+    const location = useLocation();
+    const isLoginPage = location.pathname === '/login';
+    const isAuthPage = isLoginPage || location.pathname === '/register';
+
+    const authLinkClass = isAuthPage
+        ? 'rounded-md bg-primary-500 px-4 py-2 text-sm font-semibold text-gray-900 transition hover:bg-primary-400'
+        : 'rounded-md px-4 py-2 text-sm font-medium text-gray-300 transition hover:bg-gray-800 hover:text-primary-300';
+
+    const { isLoggedIn } = useRouteLoaderData("root") as SessionData;
+
     return (
         <div className="min-h-dvh bg-gray-900 text-gray-100">
             <header className="sticky top-0 z-10 border-b border-gray-800 bg-gray-900/90 backdrop-blur">
@@ -35,6 +46,31 @@ function RootLayout() {
                                 Add Event
                             </NavLink>
                         </li>
+
+                        {isLoggedIn && (
+                            <li>
+                                <NavLink to="/dashboard" end className={linkClass}>
+                                    Dashboard
+                                </NavLink>
+                            </li>
+                        )}
+
+                        <li>
+                            {isLoggedIn ? (
+                                // Must be a POST form: a plain Link issues a GET,
+                                // and GET navigations never run the /logout action.
+                                <Form method="post" action="/logout">
+                                    <button type="submit" className={`${authLinkClass} cursor-pointer`}>
+                                        Logout
+                                    </button>
+                                </Form>
+                            ) : (
+                                <Link to={isLoginPage ? "/register" : "/login"} className={authLinkClass}>
+                                    {isLoginPage ? "Register" : "Sign in"}
+                                </Link>
+                            )}
+                        </li>
+
                     </ul>
                 </nav>
             </header>
@@ -46,7 +82,7 @@ function RootLayout() {
             <footer className="border-t border-gray-800">
                 <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-2 px-6 py-6 text-sm text-gray-500">
                     <p>EventHub — a React + React Router practice project.</p>
-                    <p>Events served from an Express API on Fly.io.</p>
+                    <p>Events served from an Express API on Vercel with Upstash Redis.</p>
                 </div>
             </footer>
         </div>

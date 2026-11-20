@@ -26,22 +26,22 @@ const layers = [
     },
     {
         title: 'API Boundary',
-        description: 'All data goes through a single fetch layer pointed at the deployed backend.',
-        items: ['VITE_API_URL → https://redux-events-backend.fly.dev/events/'],
+        description: 'All data goes through one cookie-aware fetch layer pointed at the deployed backend.',
+        items: ['VITE_API_URL → .../api/v1', 'GET /api/v1/events', 'POST /api/v1/auth/login'],
     },
     {
         title: 'Express Server',
-        description: 'A minimal REST API reading and writing the event store.',
-        items: ['GET / POST / PATCH / DELETE', 'Express Router · Express JSON body parser'],
+        description: 'A REST API with httpOnly-cookie sessions and protected write routes.',
+        items: ['GET / POST / PATCH / DELETE', 'signup · login · logout · me', 'forgot-password · verify-otp · reset-password'],
     },
     {
         title: 'Data Store',
-        description: 'Events live in a JSON file the API reads and mutates.',
-        items: ['backend/events.json — 16 events'],
+        description: 'Events and auth state persist in Upstash Redis.',
+        items: ['events key', 'auth-data key — users · OTP · reset tokens'],
     },
 ];
 
-const stack = ['Vite', 'React', 'TypeScript', 'Tailwind CSS', 'React Router', 'Express', 'Fly.io', 'Vercel'];
+const stack = ['Vite', 'React', 'TypeScript', 'Tailwind CSS', 'React Router', 'Express', 'Upstash Redis', 'Vercel'];
 
 const HomePage = () => {
     return (
@@ -57,8 +57,8 @@ const HomePage = () => {
 
                 <p className="mx-auto max-w-xl leading-relaxed text-gray-400">
                     A full-stack event management project. React Router drives the routing,
-                    loaders and actions on the client, while a small Express API on Fly.io
-                    serves the event data.
+                    loaders and actions on the client, while an Express API on Vercel
+                    serves the event data and handles cookie-based auth.
                 </p>
 
                 <div className="mt-8 flex items-center justify-center gap-3">
@@ -207,7 +207,7 @@ const HomePage = () => {
 
                 <div className="rounded-xl border border-gray-800 bg-gray-900 p-6">
                     <pre className="overflow-x-auto whitespace-pre-wrap font-mono text-sm leading-relaxed text-gray-300">
-                        <code>{`$ npm install\n$ npm run dev\n\n# backend already deployed — the client\n# talks to redux-events-backend.fly.dev`}</code>
+                        <code>{`$ npm install\n$ npm run dev\n\n# backend already deployed — the client\n# talks to backend-alpha-sable-44.vercel.app/api/v1`}</code>
                     </pre>
                 </div>
             </section>

@@ -1,8 +1,9 @@
 // INFO: This is a simplified version of the editEventDetails function
 
 import { redirect, type ActionFunctionArgs } from "react-router-dom";
+import { EVENTS_API_URL, apiFetch } from "./api";
 
-const BASE_URL = import.meta.env.VITE_API_URL ?? 'https://redux-events-backend.fly.dev/events/';
+const BASE_URL = EVENTS_API_URL;
 
 export async function editEventDetails({ request, params }: ActionFunctionArgs) {
     const { id } = params;
@@ -14,10 +15,26 @@ export async function editEventDetails({ request, params }: ActionFunctionArgs) 
     const formData = await request.formData();
     const updatedData = Object.fromEntries(formData);
 
-    const response = await fetch(`${BASE_URL}${id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(updatedData) });
+    // Cookie auth: apiFetch sends the httpOnly cookie and auto-logs-out on 401.
+    const response = await apiFetch(`${BASE_URL}${id}`, {
+        method: 'PATCH',
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(updatedData)
+    });
 
     if (!response.ok) {
-        throw new Error('Failed to fetch event');
+        let message = 'Failed to update event';
+        try {
+            const errorData = await response.json();
+            if (typeof errorData?.message === 'string' && errorData.message) {
+                message = errorData.message;
+            }
+        } catch {
+            // Keep the fallback message when the body is not JSON.
+        }
+        throw new Response(message, { status: response.status });
     }
 
     return redirect(`/events/${id}`);

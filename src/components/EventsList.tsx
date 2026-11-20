@@ -1,4 +1,5 @@
-import { Link } from 'react-router-dom';
+import { Link, useRouteLoaderData } from 'react-router-dom';
+import type { SessionData } from '../utils/auth/session';
 
 type EventsListProps = {
     events: {
@@ -24,6 +25,10 @@ function formatDate(iso: string) {
 }
 
 function EventsList({ events }: EventsListProps) {
+    // Creating an event requires a session — send anonymous visitors to sign in.
+    const { isLoggedIn } = useRouteLoaderData('root') as SessionData;
+    const createHref = isLoggedIn ? 'new' : '/login?from=%2Fevents%2Fnew';
+
     if (events?.length === 0) {
         return (
             <div className="mx-auto my-12 w-full max-w-2xl rounded-2xl border border-dashed border-gray-700 bg-gray-800/50 px-8 py-16 text-center">
@@ -36,10 +41,10 @@ function EventsList({ events }: EventsListProps) {
                 </p>
 
                 <Link
-                    to="new"
+                    to={createHref}
                     className="mt-6 inline-block rounded-md bg-primary-500 px-6 py-2.5 text-sm font-semibold text-gray-900 transition hover:bg-primary-400 active:scale-[0.98]"
                 >
-                    Create an event
+                    {isLoggedIn ? 'Create an event' : 'Sign in to create an event'}
                 </Link>
             </div>
         );

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { EVENTS_API_URL } from "../utils/api";
 
 type EventType = {
     id: string;
@@ -12,11 +13,9 @@ const EventsPage = () => {
     const [events, setEvents] = useState<EventType[]>([]);
     const [isLoading, setIsLoading] = useState(false);
 
-    const BASE_URL = import.meta.env.VITE_API_URL ?? 'https://redux-events-backend.fly.dev/events/';
-
     useEffect(() => {
         setIsLoading(true);
-        fetch(BASE_URL)
+        fetch(EVENTS_API_URL)
             .then((response) => response.json())
             .then((data) => {
                 setEvents(data?.events ?? []);

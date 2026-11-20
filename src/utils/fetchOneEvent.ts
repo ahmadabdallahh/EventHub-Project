@@ -1,6 +1,7 @@
 // INFO: This is a simplified version of the fetchOneEvent function
 
 import type { LoaderFunctionArgs } from "react-router-dom";
+import { EVENTS_API_URL, apiFetch } from "./api";
 
 export type EventType = {
     id: string;
@@ -10,19 +11,28 @@ export type EventType = {
     image: string;
 };
 
-const BASE_URL = import.meta.env.VITE_API_URL ?? 'https://redux-events-backend.fly.dev/events/';
+const BASE_URL = EVENTS_API_URL;
 
 export async function fetchOneEvent({ params }: LoaderFunctionArgs): Promise<EventType> {
     const { id } = params;
-
-    const response = await fetch(`${BASE_URL}${id}`);
 
     if (!id) {
         throw new Response("Event ID is required", { status: 400 });
     }
 
+    const response = await apiFetch(`${BASE_URL}${id}`);
+
     if (!response.ok) {
-        throw new Error('Failed to fetch event');
+        let message = 'Failed to fetch event';
+        try {
+            const errorData = await response.json();
+            if (typeof errorData?.message === 'string' && errorData.message) {
+                message = errorData.message;
+            }
+        } catch {
+            // Keep the fallback message when the body is not JSON.
+        }
+        throw new Response(message, { status: response.status });
     }
 
     const data = await response.json();

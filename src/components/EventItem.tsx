@@ -1,4 +1,5 @@
-import { Form, Link } from 'react-router-dom';
+import { Form, Link, useRouteLoaderData } from 'react-router-dom';
+import type { SessionData } from '../utils/auth/session';
 
 interface EventItemProps {
     event: {
@@ -24,6 +25,9 @@ function formatDate(iso: string) {
 }
 
 function EventItem({ event }: EventItemProps) {
+    // Viewing is public; the write actions (edit/delete) belong to signed-in users only.
+    const { isLoggedIn } = useRouteLoaderData('root') as SessionData;
+
     return (
         <article className="mx-auto mt-6 w-full max-w-3xl animate-fade-up overflow-hidden rounded-2xl bg-gray-800 shadow-xl shadow-black/20">
             <div className="relative aspect-16/8 overflow-hidden">
@@ -45,23 +49,37 @@ function EventItem({ event }: EventItemProps) {
                     {event.description}
                 </p>
 
-                <menu className="mt-6 flex items-center justify-center gap-3">
-                    <Link
-                        to="edit"
-                        className="rounded-md bg-primary-500 px-6 py-2 text-sm font-semibold text-gray-900 transition hover:bg-primary-400 active:scale-[0.98]"
-                    >
-                        Edit
-                    </Link>
-
-                    <Form method="post">
-                        <button
-                            type="submit"
-                            className="cursor-pointer rounded-md px-6 py-2 text-sm font-medium text-gray-300 transition hover:bg-gray-700 hover:text-gray-100 active:scale-[0.98]"
+                {isLoggedIn && (
+                    <menu className="mt-6 flex items-center justify-center gap-3">
+                        <Link
+                            to="edit"
+                            className="rounded-md bg-primary-500 px-6 py-2 text-sm font-semibold text-gray-900 transition hover:bg-primary-400 active:scale-[0.98]"
                         >
-                            Delete
-                        </button>
-                    </Form>
-                </menu>
+                            Edit
+                        </Link>
+
+                        <Form method="post">
+                            <button
+                                type="submit"
+                                className="cursor-pointer rounded-md px-6 py-2 text-sm font-medium text-gray-300 transition hover:bg-gray-700 hover:text-gray-100 active:scale-[0.98]"
+                            >
+                                Delete
+                            </button>
+                        </Form>
+                    </menu>
+                )}
+
+                {!isLoggedIn && (
+                    <p className="mt-6 text-center text-sm text-gray-400">
+                        <Link
+                            to="/login?from=%2Fevents%2Fnew"
+                            className="font-medium text-primary-400 transition hover:text-primary-300"
+                        >
+                            Sign in
+                        </Link>{' '}
+                        to add or manage events
+                    </p>
+                )}
             </div>
         </article>
     );

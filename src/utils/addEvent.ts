@@ -1,8 +1,9 @@
 // INFO: Add New EventType
 
 import { redirect, type ActionFunctionArgs } from "react-router-dom";
+import { EVENTS_API_URL, apiFetch } from "./api";
 
-const BASE_URL = import.meta.env.VITE_API_URL ?? 'https://redux-events-backend.fly.dev/events/';
+const BASE_URL = EVENTS_API_URL;
 
 export async function addEvent({ request }: ActionFunctionArgs) {
     const formData = await request.formData();
@@ -11,14 +12,24 @@ export async function addEvent({ request }: ActionFunctionArgs) {
     const date = formData.get("date") as string;
     const image = formData.get("image") as string;
 
-    const response = await fetch(BASE_URL, {
+    // Cookie auth: apiFetch sends the httpOnly cookie and auto-logs-out on 401.
+    const response = await apiFetch(BASE_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ title, description, date, image }),
     });
 
     if (!response.ok) {
-        throw new Error('Failed to add event');
+        let message = 'Failed to add event';
+        try {
+            const errorData = await response.json();
+            if (typeof errorData?.message === 'string' && errorData.message) {
+                message = errorData.message;
+            }
+        } catch {
+            // Keep the fallback message when the body is not JSON.
+        }
+        throw new Response(message, { status: response.status });
     }
 
     return redirect("/events");
