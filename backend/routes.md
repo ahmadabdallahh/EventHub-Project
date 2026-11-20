@@ -1,77 +1,76 @@
-# Backend Routes — `app.js`
+# Backend Routes
 
-Express API for the Events app. Base URL: `http://localhost:8080`
+Express API served from the `backend` Vercel project. Canonical base URL:
+
+`https://backend-alpha-sable-44.vercel.app/api/v1`
+
+Unversioned aliases (`/auth`, `/events`) remain mounted for older clients.
 
 ## Server setup (`app.js`)
 
 | Step | Detail |
 | ---- | ------ |
-| Port | `8080` (`app.listen(8080)`) |
-| Body parsing | `body-parser.json()` — accepts JSON request bodies |
-| CORS | `Access-Control-Allow-Origin: *`, methods `GET,POST,PATCH,DELETE`, headers `Content-Type` |
-| Route mount | `app.use('/events', eventRoutes)` — every endpoint below is prefixed with `/events` |
-| Error middleware | Returns `{ message }` with `error.status` (default `500`) as JSON |
+| Body parsing | `body-parser.json()` |
+| Cookies | `cookie-parser()` — reads the httpOnly `token` cookie |
+| CORS | Echoes caller origin, `Access-Control-Allow-Credentials: true`, methods `GET,POST,PATCH,DELETE,OPTIONS`, headers `Content-Type,Authorization` |
+| Preflight | `OPTIONS` answers `204` |
+| Auth mount | `/api/v1/auth` |
+| Events mount | `/api/v1/events` |
+| Error middleware | `{ message }` with `error.status` (default `500`) |
 
-## Endpoints (`routes/events.js`)
+## Auth endpoints (`/api/v1/auth`)
 
-### `GET /events` — list all events
+| Method | Path | Auth | Description |
+| ------ | ---- | ---- | ----------- |
+| POST | `/signup` | No | Create account, set httpOnly cookie, return `token` |
+| POST | `/login` | No | Verify password, set httpOnly cookie, return `token` |
+| POST | `/logout` | No | Clear the cookie |
+| GET | `/me` | Cookie or Bearer | Session check, returns `{ email }` |
+| POST | `/forgot-password` | No | Email a 6-digit OTP (always generic `200`) |
+| POST | `/verify-otp` | No | Burn OTP, return short-lived `resetToken` |
+| POST | `/reset-password` | No | Single-use `resetToken` + new password |
 
-- Response `200`: `{ "events": Event[] }`
-- Errors: `404 { message: "Could not find any events." }` when the store has no `events` key
+Signup/login validate email and min password length 6. Duplicate emails return `422` with `errors.email`.
 
-### `GET /events/:id` — get one event
+## Event endpoints (`/api/v1/events`)
 
-- Response `200`: `{ "event": Event }`
-- Errors: `404` when no events exist or no event matches `:id`
+| Method | Path | Auth | Description |
+| ------ | ---- | ---- | ----------- |
+| GET | `/` | No | `{ events: Event[] }` |
+| GET | `/:id` | No | `{ event: Event }` |
+| POST | `/` | Cookie or Bearer | Create event (`201`) |
+| PATCH | `/:id` | Cookie or Bearer | Replace event (`200`) |
+| DELETE | `/:id` | Cookie or Bearer | Delete event (`200`) |
 
-### `POST /events` — create an event
+Missing/invalid session on a write returns `401 { message: "Not authenticated." }`.
 
-- Body: `{ title, description, date, image }`
-- Validation failures → `422 { message: "Adding the event failed due to validation errors.", errors: { title?, description?, date?, image? } }`
-- Success → `201 { message: "Event saved.", event }` (new `id` generated via `uuid`, prepended to the list)
+Event validation: non-empty `title` and `description`, parseable `date`, `image` starting with `http`. Failures return `422` with an `errors` object.
 
-### `PATCH /events/:id` — replace an event
+## Persistence
 
-- Body: same as `POST`
-- Validation failures → `422 { message: "Updating the event failed due to validation errors.", errors }`
-- Success → `200 { message: "Event updated.", event }`
-- Errors: `404` when the `:id` does not exist
+| Data | Store |
+| ---- | ----- |
+| Events | Upstash key `events` (array) |
+| Users, OTP hashes, spent reset tokens | Upstash key `auth-data` |
 
-### `DELETE /events/:id` — delete an event
+Local dev without Upstash env vars falls back to `backend/events.json` and `backend/auth-data.json`.
 
-- Success → `200 { message: "Event deleted." }`
-- Note: deleting a non-existent `:id` still returns `200` (filter is a no-op)
+## Required environment variables
 
-## Event shape
+| Name | Used for |
+| ---- | -------- |
+| `UPSTASH_REDIS_REST_URL` | Redis REST endpoint |
+| `UPSTASH_REDIS_REST_TOKEN` | Redis REST token |
+| `JWT_SECRET` | Signs session and reset tokens |
+| `BREVO_API_KEY` | Sends reset OTP email |
+| `BREVO_SENDER_EMAIL` | Verified Brevo sender |
+| `BREVO_SENDER_NAME` | Sender display name (optional) |
+| `NODE_ENV` | `production` enables `SameSite=None; Secure` cookies |
 
-```json
-{
-  "id": "e1",
-  "title": "A dummy event",
-  "description": "Join this amazing event and connect with fellow developers.",
-  "date": "2023-02-22",
-  "image": "https://..."
-}
-```
-
-## Validation rules (`util/validation.js`)
-
-| Field | Rule |
-| ----- | ---- |
-| `title` | non-empty text |
-| `description` | non-empty text |
-| `date` | parseable date string |
-| `image` | string starting with `http` |
-
-## Data store (`data/event.js` + `events.json`)
-
-- File-based JSON store; all CRUD helpers (`getAll`, `get`, `add`, `replace`, `remove`) read/write `events.json`
-- `add` generates the `id` server-side with `uuid v4` and unshifts (newest first)
-- `replace` keeps the original `:id` and overwrites the remaining fields
-
-## Run it
+## Run locally
 
 ```bash
+cd backend
 npm install
 node app.js
 ```
