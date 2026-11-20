@@ -1,7 +1,7 @@
 const fs = require('node:fs/promises');
 const path = require('node:path');
 
-const { v4: generateId } = require('uuid');
+const { randomUUID } = require('node:crypto');
 
 const { NotFoundError } = require('../util/errors');
 
@@ -113,7 +113,7 @@ async function get(id) {
 
 async function add(data) {
   const events = (await readEvents()) || [];
-  events.unshift({ ...data, id: generateId() });
+  events.unshift({ ...data, id: randomUUID() });
   await writeEvents(events);
 }
 
