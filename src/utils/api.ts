@@ -10,6 +10,8 @@ export const EVENTS_API_URL = `${API_BASE_URL}/events/`;
 
 export const AUTH_API_URL = `${API_BASE_URL}/auth`;
 
+export const ATTENDANCE_API_URL = `${API_BASE_URL}/attendance`;
+
 /**
  * Cookie-authenticated fetch. Sends the httpOnly `token` cookie and
  * auto-logs-out on 401: clears the server cookie, then bounces to /login.

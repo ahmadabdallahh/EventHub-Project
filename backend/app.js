@@ -6,6 +6,7 @@ const express = require('express');
 
 const eventRoutes = require('./routes/events');
 const authRoutes = require('./routes/auth');
+const attendanceRoutes = require('./routes/attendance');
 
 const app = express();
 
@@ -31,6 +32,9 @@ for (const prefix of ['/api/v1/auth', '/auth']) {
 }
 for (const prefix of ['/api/v1/events', '/events']) {
   app.use(prefix, eventRoutes);
+}
+for (const prefix of ['/api/v1/attendance', '/attendance']) {
+  app.use(prefix, attendanceRoutes);
 }
 
 app.use((error, req, res, _next) => {

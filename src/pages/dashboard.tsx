@@ -1,4 +1,4 @@
-import { CalendarDays, Clock, LayoutGrid, Mail, Plus, Users } from 'lucide-react';
+import { CalendarDays, Clock, LayoutGrid, Mail, Plus, QrCode, ScanLine, Users } from 'lucide-react';
 import { Link, redirect, useLoaderData } from 'react-router-dom';
 import { AUTH_API_URL, EVENTS_API_URL, apiFetch } from '../utils/api';
 import type { EventType } from '../utils/fetchOneEvent';
@@ -128,6 +128,20 @@ const DashboardPage = () => {
                 >
                     <Users aria-hidden="true" className="h-4 w-4" />
                     View all users
+                </Link>
+                <Link
+                    to="/qr"
+                    className="inline-flex items-center gap-2 rounded-md border border-gray-700 px-6 py-2.5 text-sm font-medium text-gray-300 transition hover:bg-gray-800 hover:text-primary-300"
+                >
+                    <QrCode aria-hidden="true" className="h-4 w-4" />
+                    QR codes
+                </Link>
+                <Link
+                    to="/attendance"
+                    className="inline-flex items-center gap-2 rounded-md border border-gray-700 px-6 py-2.5 text-sm font-medium text-gray-300 transition hover:bg-gray-800 hover:text-primary-300"
+                >
+                    <ScanLine aria-hidden="true" className="h-4 w-4" />
+                    Attendance
                 </Link>
             </div>
         </div>

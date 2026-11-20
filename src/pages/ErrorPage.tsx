@@ -18,7 +18,7 @@ const ErrorPage = () => {
     }
 
     return (
-        <div className="mx-auto flex min-h-[60dvh] w-full max-w-2xl flex-col items-center justify-center px-6 py-16 text-center">
+        <div className="mx-auto flex min-h-[60dvh] w-full max-w-2xl flex-col items-center justify-center px-4 py-16 text-center sm:px-6">
             <p className="mb-2 text-sm font-semibold uppercase tracking-widest text-primary-400 tabular-nums">
                 {status}
             </p>
@@ -31,7 +31,7 @@ const ErrorPage = () => {
                 {message}
             </p>
 
-            <div className="mt-8 flex items-center gap-3">
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
                 <Link
                     to="/"
                     className="rounded-md bg-primary-500 px-6 py-2.5 text-sm font-semibold text-gray-900 transition hover:bg-primary-400 active:scale-[0.98]"

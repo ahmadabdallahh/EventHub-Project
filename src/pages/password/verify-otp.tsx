@@ -90,7 +90,7 @@ const VerifyOtpPage = () => {
                             )}
                         </div>
                     )}
-                    <div className="flex items-center justify-center gap-2 sm:gap-3">
+                    <div className="flex items-center justify-center gap-1.5 sm:gap-3">
                         {digits.map((digit, index) => (
                             <input
                                 key={index}
@@ -106,7 +106,7 @@ const VerifyOtpPage = () => {
                                 inputMode="numeric"
                                 autoComplete="one-time-code"
                                 aria-label={`Digit ${index + 1}`}
-                                className="h-12 w-11 rounded-md border border-gray-700 bg-gray-900 text-center text-xl font-semibold text-gray-100 transition focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 sm:h-14 sm:w-12"
+                                className="h-11 w-full min-w-0 flex-1 rounded-md border border-gray-700 bg-gray-900 text-center text-lg font-semibold text-gray-100 transition focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 sm:h-14 sm:w-12 sm:flex-none sm:text-xl"
                             />
                         ))}
                     </div>

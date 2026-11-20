@@ -45,13 +45,13 @@ const stack = ['Vite', 'React', 'TypeScript', 'Tailwind CSS', 'React Router', 'E
 
 const HomePage = () => {
     return (
-        <div className="mx-auto max-w-4xl py-12">
+        <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6 sm:py-12">
             <section className="mb-16 text-center">
                 <p className="mb-3 text-sm font-semibold uppercase tracking-widest text-primary-400">
                     React + React Router Practice
                 </p>
 
-                <h2 className="font-display mb-4 text-balance text-4xl font-bold tracking-tight text-gray-100 sm:text-5xl">
+                <h2 className="font-display mb-4 text-balance text-3xl font-bold tracking-tight text-gray-100 sm:text-4xl lg:text-5xl">
                     EventHub — plan, view, and manage events
                 </h2>
 
@@ -61,7 +61,7 @@ const HomePage = () => {
                     serves the event data and handles cookie-based auth.
                 </p>
 
-                <div className="mt-8 flex items-center justify-center gap-3">
+                <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
                     <Link
                         to="/events"
                         className="rounded-md bg-primary-500 px-6 py-2.5 text-sm font-semibold text-gray-900 transition hover:bg-primary-400 active:scale-[0.98]"
@@ -82,7 +82,7 @@ const HomePage = () => {
                 <p className="mb-1 text-sm font-semibold uppercase tracking-widest text-primary-400">
                     How it works
                 </p>
-                <h3 className="font-display mb-8 text-3xl font-bold tracking-tight text-gray-100">
+                <h3 className="font-display mb-8 text-2xl font-bold tracking-tight text-gray-100 sm:text-3xl">
                     A three-step flow
                 </h3>
 
@@ -124,7 +124,7 @@ const HomePage = () => {
                 <p className="mb-1 text-sm font-semibold uppercase tracking-widest text-primary-400">
                     Architecture
                 </p>
-                <h3 className="font-display mb-8 text-3xl font-bold tracking-tight text-gray-100">
+                <h3 className="font-display mb-8 text-2xl font-bold tracking-tight text-gray-100 sm:text-3xl">
                     Request lifecycle
                 </h3>
 
@@ -181,7 +181,7 @@ const HomePage = () => {
                 <p className="mb-1 text-sm font-semibold uppercase tracking-widest text-primary-400">
                     Tech stack
                 </p>
-                <h3 className="font-display mb-8 text-3xl font-bold tracking-tight text-gray-100">
+                <h3 className="font-display mb-8 text-2xl font-bold tracking-tight text-gray-100 sm:text-3xl">
                     Built with
                 </h3>
 
@@ -201,7 +201,7 @@ const HomePage = () => {
                 <p className="mb-1 text-sm font-semibold uppercase tracking-widest text-primary-400">
                     Getting started
                 </p>
-                <h3 className="font-display mb-8 text-3xl font-bold tracking-tight text-gray-100">
+                <h3 className="font-display mb-8 text-2xl font-bold tracking-tight text-gray-100 sm:text-3xl">
                     Run it locally
                 </h3>
 
