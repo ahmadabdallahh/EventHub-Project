@@ -1,15 +1,18 @@
-import { useEffect, useId, useRef, useState } from 'react';
+import { useCallback, useEffect, useId, useRef, useState } from 'react';
 import { Camera, CameraOff, ImageUp, LoaderCircle, ScanLine } from 'lucide-react';
 import QrScanner from 'qr-scanner';
 
 type Props = {
     onResult: (data: string) => void;
+    onDuplicate?: (data: string) => void;
 };
+
+const DUPLICATE_WINDOW_MS = 5000;
 
 const buttonClass =
     'inline-flex items-center justify-center gap-2 rounded-md px-4 py-2 text-sm font-semibold transition active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500';
 
-function QrScannerPanel({ onResult }: Props) {
+function QrScannerPanel({ onResult, onDuplicate }: Props) {
     const inputId = useId();
     const [mode, setMode] = useState<'camera' | 'upload'>('camera');
     const [cameraState, setCameraState] = useState<'idle' | 'active'>('idle');
@@ -18,58 +21,128 @@ function QrScannerPanel({ onResult }: Props) {
     const videoRef = useRef<HTMLVideoElement>(null);
     const fileRef = useRef<HTMLInputElement>(null);
     const scannerRef = useRef<QrScanner | null>(null);
+    const startingRef = useRef(false);
+    const manuallyStoppedRef = useRef(false);
+    const lastScanRef = useRef<{ data: string; at: number } | null>(null);
+    const onResultRef = useRef(onResult);
+    const onDuplicateRef = useRef(onDuplicate);
 
     useEffect(() => {
-        return () => {
-            scannerRef.current?.destroy();
-            scannerRef.current = null;
-        };
+        onResultRef.current = onResult;
+        onDuplicateRef.current = onDuplicate;
+    }, [onResult, onDuplicate]);
+
+    const teardownScanner = useCallback(() => {
+        scannerRef.current?.destroy();
+        scannerRef.current = null;
     }, []);
 
-    function stopCamera() {
-        scannerRef.current?.stop();
-        scannerRef.current = null;
-        setCameraState('idle');
-    }
-
-    async function startCamera() {
-        setError('');
-        if (!videoRef.current) {
+    const handleDecoded = useCallback((data: string) => {
+        const now = Date.now();
+        const last = lastScanRef.current;
+        if (last && last.data === data && now - last.at < DUPLICATE_WINDOW_MS) {
+            onDuplicateRef.current?.(data);
             return;
         }
-        if (!navigator.mediaDevices?.getUserMedia) {
-            setError('Camera access is not available in this browser. Use image upload instead.');
-            return;
-        }
+        lastScanRef.current = { data, at: now };
+        onResultRef.current(data);
+    }, []);
 
-        const scanner = new QrScanner(
-            videoRef.current,
-            (result) => {
-                onResult(result.data);
-                stopCamera();
-            },
-            {
-                preferredCamera: 'environment',
-                returnDetailedScanResult: true,
-                maxScansPerSecond: 5,
+    const startCamera = useCallback(
+        async (isCancelled: () => boolean = () => false) => {
+            setError('');
+            if (!videoRef.current) {
+                return;
             }
-        );
+            if (!navigator.mediaDevices?.getUserMedia) {
+                setError('Camera access is not available in this browser. Use image upload instead.');
+                return;
+            }
+            if (scannerRef.current || startingRef.current) {
+                return;
+            }
 
-        try {
-            await scanner.start();
-            scannerRef.current = scanner;
-            setCameraState('active');
-        } catch {
-            scanner.destroy();
-            setError('Camera permission was denied or no camera was found. Use image upload instead.');
+            startingRef.current = true;
+            const scanner = new QrScanner(
+                videoRef.current,
+                (result) => {
+                    handleDecoded(result.data);
+                },
+                {
+                    preferredCamera: 'environment',
+                    returnDetailedScanResult: true,
+                    maxScansPerSecond: 5,
+                }
+            );
+
+            try {
+                await scanner.start();
+                if (isCancelled()) {
+                    scanner.destroy();
+                    return;
+                }
+                scannerRef.current = scanner;
+                manuallyStoppedRef.current = false;
+                setCameraState('active');
+            } catch {
+                scanner.destroy();
+                if (!isCancelled()) {
+                    setCameraState('idle');
+                    setError('Camera permission was denied or no camera was found. Use image upload instead.');
+                }
+            } finally {
+                startingRef.current = false;
+            }
+        },
+        [handleDecoded]
+    );
+
+    const stopCamera = useCallback(() => {
+        manuallyStoppedRef.current = true;
+        teardownScanner();
+        setCameraState('idle');
+    }, [teardownScanner]);
+
+    useEffect(() => {
+        if (mode !== 'camera') {
+            return;
         }
-    }
+        let cancelled = false;
+        const frame = window.requestAnimationFrame(() => {
+            void startCamera(() => cancelled);
+        });
+        return () => {
+            cancelled = true;
+            window.cancelAnimationFrame(frame);
+            teardownScanner();
+            startingRef.current = false;
+        };
+    }, [mode, startCamera, teardownScanner]);
+
+    useEffect(() => {
+        function handleVisibility() {
+            if (
+                document.visibilityState === 'visible' &&
+                !manuallyStoppedRef.current &&
+                !scannerRef.current &&
+                mode === 'camera'
+            ) {
+                void startCamera();
+            }
+        }
+        document.addEventListener('visibilitychange', handleVisibility);
+        return () => document.removeEventListener('visibilitychange', handleVisibility);
+    }, [mode, startCamera]);
 
     function switchMode(next: 'camera' | 'upload') {
         if (next === mode) {
             return;
         }
-        stopCamera();
+        if (next === 'upload') {
+            stopCamera();
+        } else {
+            manuallyStoppedRef.current = false;
+        }
         setError('');
         setMode(next);
     }
@@ -85,7 +158,7 @@ function QrScannerPanel({ onResult }: Props) {
                 returnDetailedScanResult: true,
                 alsoTryWithoutScanRegion: true,
             });
-            onResult(result.data);
+            handleDecoded(result.data);
         } catch {
             setError('No QR code found in that image. Try a larger, sharper photo.');
         } finally {
@@ -144,10 +217,16 @@ function QrScannerPanel({ onResult }: Props) {
                                 <p className="text-sm">Camera is off</p>
                             </div>
                         )}
+                        {cameraState === 'active' && (
+                            <span className="absolute right-3 top-3 inline-flex items-center gap-1 rounded-full bg-gray-900/80 px-2.5 py-1 text-xs font-semibold text-primary-300 backdrop-blur">
+                                <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-primary-400" />
+                                Scanning
+                            </span>
+                        )}
                     </div>
                     <div className="flex flex-col gap-3">
                         <p className="max-w-xs text-sm leading-relaxed text-gray-400">
-                            Point the camera at a QR code. Scanning stops when a code is found.
+                            Point the camera at a QR code. It stays on so you can scan the next person.
                         </p>
                         {cameraState === 'active' ? (
                             <button
@@ -161,7 +240,10 @@ function QrScannerPanel({ onResult }: Props) {
                         ) : (
                             <button
                                 type="button"
-                                onClick={startCamera}
+                                onClick={() => {
+                                    manuallyStoppedRef.current = false;
+                                    void startCamera();
+                                }}
                                 className={`${buttonClass} bg-primary-500 text-gray-900 hover:bg-primary-400`}
                             >
                                 <Camera aria-hidden="true" className="h-4 w-4" />

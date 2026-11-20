@@ -50,6 +50,16 @@ function AttendancePage() {
         }
     }
 
+    function handleDuplicate(data: string) {
+        const userId = attendanceUserId(parseScan(data).value);
+        if (!userId) {
+            return;
+        }
+        const user = users.find((member) => member.id === userId);
+        setError('');
+        setFeedback(user ? `${user.name} already checked in.` : 'Already checked in.');
+    }
+
     async function handleReset() {
         setResetting(true);
         setError('');
@@ -151,7 +161,7 @@ function AttendancePage() {
                         Scan attendance
                     </h2>
                 </div>
-                <QrScannerPanel onResult={handleScan} />
+                <QrScannerPanel onResult={handleScan} onDuplicate={handleDuplicate} />
                 {feedback && (
                     <p role="status" className="mt-6 rounded-xl border border-primary-500/30 bg-primary-500/5 p-4 text-sm font-medium text-primary-200">
                         {feedback}

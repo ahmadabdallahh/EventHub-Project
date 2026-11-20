@@ -75,15 +75,16 @@ function QrTile({ entry }: { entry: QrEvent }) {
     );
 }
 
-function ScanResult({ scan }: { scan: ScanInfo }) {
-    const label =
-        scan.kind === 'event'
-            ? 'Event QR scanned'
-            : scan.kind === 'attendance'
-              ? 'Attendance QR scanned'
-              : scan.kind === 'link'
-                ? 'Link scanned'
-                : 'Text scanned';
+function ScanResult({ scan, duplicate }: { scan: ScanInfo; duplicate: boolean }) {
+    const label = duplicate
+        ? 'Already scanned'
+        : scan.kind === 'event'
+          ? 'Event QR scanned'
+          : scan.kind === 'attendance'
+            ? 'Attendance QR scanned'
+            : scan.kind === 'link'
+              ? 'Link scanned'
+              : 'Text scanned';
 
     return (
         <div role="status" className="mt-6 rounded-xl border border-primary-500/30 bg-primary-500/5 p-4">
@@ -115,6 +116,7 @@ function ScanResult({ scan }: { scan: ScanInfo }) {
 const QrPage = () => {
     const { entries } = useLoaderData() as QrPageData;
     const [scan, setScan] = useState<ScanInfo | null>(null);
+    const [duplicate, setDuplicate] = useState(false);
 
     return (
         <div className="mx-auto flex w-full max-w-6xl flex-col gap-8 px-4 py-10 sm:px-6 sm:py-12">
@@ -156,8 +158,17 @@ const QrPage = () => {
                         Scan a QR code
                     </h2>
                 </div>
-                <QrScannerPanel onResult={(data) => setScan(parseScan(data))} />
-                {scan && <ScanResult scan={scan} />}
+                <QrScannerPanel
+                    onResult={(data) => {
+                        setScan(parseScan(data));
+                        setDuplicate(false);
+                    }}
+                    onDuplicate={(data) => {
+                        setScan(parseScan(data));
+                        setDuplicate(true);
+                    }}
+                />
+                {scan && <ScanResult scan={scan} duplicate={duplicate} />}
             </section>
         </div>
     );
