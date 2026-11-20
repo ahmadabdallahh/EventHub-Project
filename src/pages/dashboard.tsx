@@ -1,4 +1,4 @@
-import { CalendarDays, Clock, LayoutGrid, Mail, Plus } from 'lucide-react';
+import { CalendarDays, Clock, LayoutGrid, Mail, Plus, Users } from 'lucide-react';
 import { Link, redirect, useLoaderData } from 'react-router-dom';
 import { AUTH_API_URL, EVENTS_API_URL, apiFetch } from '../utils/api';
 import type { EventType } from '../utils/fetchOneEvent';
@@ -8,6 +8,7 @@ export type DashboardData = {
     total: number;
     upcoming: number;
     past: number;
+    userCount: number;
     latest: EventType | null;
 };
 
@@ -26,6 +27,12 @@ export async function dashboardLoader(): Promise<DashboardData> {
     }
     const { events } = (await eventsResponse.json()) as { events: EventType[] };
 
+    const usersResponse = await apiFetch(`${AUTH_API_URL}/users`);
+    if (!usersResponse.ok) {
+        throw new Response('Failed to load registered users.', { status: usersResponse.status });
+    }
+    const { users } = (await usersResponse.json()) as { users: unknown[] };
+
     const today = new Date().toISOString().slice(0, 10);
     const upcomingCount = events.filter((event) => event.date >= today).length;
     const latest = [...events].sort((a, b) => b.date.localeCompare(a.date))[0] ?? null;
@@ -35,6 +42,7 @@ export async function dashboardLoader(): Promise<DashboardData> {
         total: events.length,
         upcoming: upcomingCount,
         past: events.length - upcomingCount,
+        userCount: users.length,
         latest,
     };
 }
@@ -43,12 +51,13 @@ const statCardClass =
     'rounded-xl bg-gray-800 p-5 shadow-xl shadow-black/20 transition hover:bg-gray-800/80';
 
 const DashboardPage = () => {
-    const { email, total, upcoming, past, latest } = useLoaderData() as DashboardData;
+    const { email, total, upcoming, past, userCount, latest } = useLoaderData() as DashboardData;
 
     const stats = [
         { icon: LayoutGrid, label: 'Total events', value: total },
         { icon: CalendarDays, label: 'Upcoming', value: upcoming },
         { icon: Clock, label: 'Past', value: past },
+        { icon: Users, label: 'Registered users', value: userCount },
     ];
 
     return (
@@ -66,7 +75,7 @@ const DashboardPage = () => {
                 </p>
             </div>
 
-            <div className="grid gap-4 sm:grid-cols-3">
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                 {stats.map(({ icon: Icon, label, value }) => (
                     <div key={label} className={statCardClass}>
                         <Icon aria-hidden="true" className="mb-3 h-5 w-5 text-primary-400" />
@@ -112,6 +121,13 @@ const DashboardPage = () => {
                     className="inline-flex items-center rounded-md border border-gray-700 px-6 py-2.5 text-sm font-medium text-gray-300 transition hover:bg-gray-800 hover:text-primary-300"
                 >
                     View all events
+                </Link>
+                <Link
+                    to="/dashboard/users"
+                    className="inline-flex items-center gap-2 rounded-md border border-gray-700 px-6 py-2.5 text-sm font-medium text-gray-300 transition hover:bg-gray-800 hover:text-primary-300"
+                >
+                    <Users aria-hidden="true" className="h-4 w-4" />
+                    View all users
                 </Link>
             </div>
         </div>

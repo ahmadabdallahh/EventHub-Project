@@ -13,6 +13,7 @@ import { editEventDetails } from "./utils/editEventDetails";
 import LoginPage from "./pages/login";
 import RegisterPage from "./pages/register";
 import DashboardPage, { dashboardLoader } from "./pages/dashboard";
+import UsersPage, { usersLoader } from "./pages/UsersPage";
 import { signUp } from "./utils/auth/sign-up";
 import { signIn } from "./utils/auth/sign-in";
 import { logoutAction, requireAuth, sessionLoader } from "./utils/auth/session";
@@ -96,6 +97,11 @@ const router = createBrowserRouter([
                 path: "/dashboard",
                 element: <DashboardPage />,
                 loader: dashboardLoader,
+            },
+            {
+                path: "/dashboard/users",
+                element: <UsersPage />,
+                loader: usersLoader,
             },
             {
                 // No element: the action clears the cookie and redirects.

@@ -26,6 +26,7 @@ Unversioned aliases (`/auth`, `/events`) remain mounted for older clients.
 | POST | `/login` | No | Verify password, set httpOnly cookie, return `token` |
 | POST | `/logout` | No | Clear the cookie |
 | GET | `/me` | Cookie or Bearer | Session check, returns `{ email }` |
+| GET | `/users` | Cookie or Bearer | List registered accounts as `{ users }` |
 | POST | `/forgot-password` | No | Email a 6-digit OTP (always generic `200`) |
 | POST | `/verify-otp` | No | Burn OTP, return short-lived `resetToken` |
 | POST | `/reset-password` | No | Single-use `resetToken` + new password |
@@ -52,6 +53,8 @@ Event validation: non-empty `title` and `description`, parseable `date`, `image`
 | ---- | ----- |
 | Events | Upstash key `events` (array) |
 | Users, OTP hashes, spent reset tokens | Upstash key `auth-data` |
+
+`/users` returns only `id`, `email` and `joinedAt`. Password hashes never leave the data layer.
 
 Local dev without Upstash env vars falls back to `backend/events.json` and `backend/auth-data.json`.
 

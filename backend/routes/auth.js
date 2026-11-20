@@ -1,5 +1,5 @@
 const express = require('express');
-const { add, get, updatePassword } = require('../data/user');
+const { add, getAll, get, updatePassword } = require('../data/user');
 const {
   createJSONToken,
   isValidPassword,
@@ -101,6 +101,17 @@ router.post('/logout', (req, res) => {
 // Session check for the nav (reads the httpOnly cookie via checkAuth).
 router.get('/me', checkAuth, (req, res) => {
   res.json({ email: req.token.email });
+});
+
+// Registered accounts for the dashboard. Auth required; the data layer
+// strips password hashes before the response is sent.
+router.get('/users', checkAuth, async (_req, res, next) => {
+  try {
+    const users = await getAll();
+    res.json({ users });
+  } catch (error) {
+    next(error);
+  }
 });
 
 // Step 1 — request a reset code. Always returns the same 200 response so

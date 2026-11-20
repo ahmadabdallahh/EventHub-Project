@@ -11,9 +11,24 @@ async function add(data) {
   if (!storedData.users) {
     storedData.users = [];
   }
-  storedData.users.push({ ...data, password: hashedPw, id: userId });
+  storedData.users.push({
+    id: userId,
+    email: data.email,
+    password: hashedPw,
+    joinedAt: new Date().toISOString(),
+  });
   await writeData(storedData);
   return { id: userId, email: data.email };
+}
+
+// Public-safe projection. Password hashes never leave the data layer.
+async function getAll() {
+  const storedData = await readData();
+  return (storedData.users || []).map(({ id, email, joinedAt }) => ({
+    id,
+    email,
+    joinedAt: joinedAt || null,
+  }));
 }
 
 async function get(email) {
@@ -41,5 +56,6 @@ async function updatePassword(email, newPassword) {
 }
 
 exports.add = add;
+exports.getAll = getAll;
 exports.get = get;
 exports.updatePassword = updatePassword;

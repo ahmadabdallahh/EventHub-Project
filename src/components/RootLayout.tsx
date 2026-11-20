@@ -81,7 +81,7 @@ function RootLayout() {
 
             <footer className="border-t border-gray-800">
                 <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-2 px-6 py-6 text-sm text-gray-500">
-                    <p>EventHub — a React + React Router practice project.</p>
+                    <p>EventHub - a React + React Router practice project.</p>
                     <p>Events served from an Express API on Vercel with Upstash Redis.</p>
                 </div>
             </footer>
