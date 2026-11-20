@@ -43,12 +43,14 @@ async function redisGet() {
 
 async function redisSet(value) {
   const { url, token } = redisConfig();
-  const res = await fetch(`${url}/set/events`, {
+  const res = await fetch(url, {
     method: 'POST',
     headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ value: JSON.stringify(value) }),
+    body: JSON.stringify(['SET', 'events', JSON.stringify(value)]),
   });
   if (!res.ok) throw new Error(`Upstash SET failed: ${res.status}`);
+  const body = await res.json();
+  if (body.error) throw new Error(`Upstash SET failed: ${body.error}`);
 }
 
 // --- Store selection ---
