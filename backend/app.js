@@ -8,8 +8,11 @@ const app = express();
 app.use(bodyParser.json());
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PATCH,DELETE');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PATCH,DELETE,OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(204);
+  }
   next();
 });
 
@@ -21,4 +24,8 @@ app.use((error, req, res, _next) => {
   res.status(status).json({ message: message });
 });
 
-app.listen(process.env.PORT || 8080);
+if (require.main === module) {
+  app.listen(process.env.PORT || 8080);
+}
+
+module.exports = app;
